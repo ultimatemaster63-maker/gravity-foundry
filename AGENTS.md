@@ -1,6 +1,6 @@
 # Gravity Foundry
 
-This repository is exclusively Gravity Foundry. Never use Titan places, credentials, paths, or assets. No gameplay is implemented yet.
+This repository is exclusively Gravity Foundry. Never use Titan places, credentials, paths, or assets. The first gameplay loop is implemented; engine validation is still required.
 
 - Use this existing checkout; cloud tasks are isolated. Do not create worktrees unless requested.
 - Code lives in `src/shared`, `src/server`, `src/client`. Keep server rules private; shared modules contain only client-safe data/functions. Use strict Luau, explicit dependencies, no require cycles or `_G`.

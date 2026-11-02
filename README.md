@@ -1,10 +1,10 @@
 # Gravity Foundry
 
-A standalone Roblox project scaffold. No gameplay, third-party packages, remote events, or persistence yet. This project has no Titan connection or place IDs.
+A standalone Roblox gravity-combat game with a runtime-generated industrial arena, three sectors, Salvage upgrades and a reactor guardian. See [first playable and test route](docs/PLAYTEST.md). This project has no Titan connection or place IDs. Progress is session-only.
 
 - `src/server`: one server entry point; add private systems as ModuleScripts here.
 - `src/client`: one client entry point; add controllers as ModuleScripts here.
-- `src/shared`: client-safe shared modules, currently only project identity.
+- `src/shared`: client-safe shared modules, currently project identity.
 - `default.project.json`: maps dedicated GravityFoundry code folders only. Studio owns the world.
 - `v2-vault-main/v2-vault-main`: bundled LihFolk development reference; not part of the built game.
 
