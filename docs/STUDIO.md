@@ -1,52 +1,59 @@
-# Open and test Gravity Foundry in Studio
+# Pull, sync and playtest in Studio
 
-The cloud environment does **not** connect to your computer's Roblox Studio. Cloud localhost is a different machine. No Studio credentials or local connection are inherited.
+Use a dedicated Gravity Foundry checkout and unpublished place. Cloud localhost is not your computer; this session has no inherited Studio connection.
 
-## Recommended: Git transfer, then local Rojo
+## First local installation
 
-1. Use a **dedicated Gravity Foundry checkout** on your computer. After the setup branch has been pushed, first-time setup is:
+Install Git, Python 3, Roblox Studio and Rokit. Then:
 
-   ```sh
-   git clone --branch setup/gravity-foundry https://github.com/ultimatemaster63-maker/gravity-foundry.git
-   cd gravity-foundry
-   git log -1 --oneline
-   ```
+```sh
+git clone --branch setup/gravity-foundry https://github.com/ultimatemaster63-maker/gravity-foundry.git
+cd gravity-foundry
+rokit install
+rojo --version
+rojo plugin install
+python scripts/check.py
+```
 
-   For an existing dedicated checkout with no uncommitted changes:
+Run plugin installation with Studio closed. The pinned CLI is Rojo 7.6.1. Use `python3` on systems where that is the launcher.
 
-   ```sh
-   git fetch origin
-   git switch setup/gravity-foundry
-   git pull --ff-only origin setup/gravity-foundry
-   git log -1 --oneline
-   ```
+Open `build/GravityFoundry.rbxlx` using **File > Open from File**. The world appears when Play starts; the edit-time file contains the mapped game code. From your local repository root:
 
-   Confirm the commit matches the setup handoff. Do not run these commands in Titan's checkout. If local changes exist, preserve them before switching; do not reset them.
-2. Install Roblox Studio, Git, Python 3 and Rokit locally. In the repository root run `rokit install`, then verify `rojo --version` is 7.6.1. Install the matching Studio plugin using `rojo plugin install` on your computer with Studio closed (or the official Rojo plugin from https://rojo.space/docs/v7/getting-started/installation/).
-3. Run `python scripts/check.py` (`python3` on macOS). Then open `build/GravityFoundry.rbxlx` in Studio using **File > Open from File**. It is a minimal place with code only; no map or gameplay is expected.
-4. Keep this place unpublished for the first sync. `servePlaceIds: [0]` restricts live sync to unpublished places. From the **local repository root** run `rojo serve default.project.json --address 127.0.0.1 --port 34872`. In Studio's Rojo plugin connect to `localhost:34872`. Confirm the project name **Gravity Foundry** and inspect the proposed changes before syncing.
-5. Open Output and Script Analysis, then click **Play**. Expect `[Gravity Foundry] Server scaffold ready` and `[Gravity Foundry] Client scaffold ready`, and no script errors. Stop the session. This verifies the entry points and shared module; gameplay is intentionally absent. Cloud builds do not establish this result.
-6. If you want a persistent development place, publish using **Publish to Roblox As** into a **new Gravity Foundry experience**, never Titan. Record its development **place ID** and replace `[0]` in `servePlaceIds` with `[YOUR_NUMERIC_DEV_PLACE_ID]` (actual JSON numbers). Commit that explicit change before reconnecting. No ID has been invented here. Save the world using Studio/version history.
-7. For later cloud work: review and push the cloud code commit, stop Play locally, pull that commit on your computer, run the checks and let your **local** Rojo server sync it. Re-run Play and inspect Output. Do not edit mapped code in Studio; Rojo treats the filesystem as authoritative.
+```sh
+rojo serve default.project.json --address 127.0.0.1 --port 34872
+```
 
-Rojo owns only `ReplicatedStorage.GravityFoundryShared`, `ServerScriptService.GravityFoundryServer`, and `StarterPlayer.StarterPlayerScripts.GravityFoundryClient`. Keep hand-built world objects outside those folders. No Workspace mapping or broad world deletion is configured. The initial file contains no baseplate; build a test world locally when gameplay work begins.
+In Studio's Rojo plugin connect to `localhost:34872`, confirm **Gravity Foundry**, inspect the proposed sync, then Play with Output visible. Follow PLAYTEST.md from the Breaker Yard through guardian victory and replay.
 
-## Offline artifact fallback
+`servePlaceIds: [0]` permits unpublished places only. Do not publish as part of this task. If you later choose an existing Gravity Foundry development place, explicitly replace the allowlist with that numeric **place ID**, never Titan's ID, before reconnecting.
 
-Download `build/GravityFoundry.rbxlx` from the cloud workspace to your computer and open it via File > Open from File. This is a point-in-time build and needs no Rojo connection. Download a fresh build after changes. Opening a fresh build does not merge or preserve a world edited in an older file: use the local Git/Rojo workflow for ongoing work.
+## Updating an existing checkout
 
-Never expose the cloud Rojo port or enter Titan IDs as a shortcut. No Open Cloud API key is required for this workflow.
+Stop Play and preserve any local edits before switching or pulling. Then:
 
-## When to reconnect, restart, or rebuild
+```sh
+git fetch origin
+git switch setup/gravity-foundry
+git pull --ff-only origin setup/gravity-foundry
+git log -1 --oneline
+rokit install
+python scripts/check.py
+```
 
-| Change | Required local action |
+Confirm the commit matches the handoff. Keep local Rojo running for code-only changes, allow the plugin to sync, then start a fresh Play session. Code is authoritative on disk; do not edit mapped scripts in Studio. Session-only upgrades reset when you stop and restart the server; in-game Reignite retains them.
+
+| Change | Required action |
 | --- | --- |
-| `.luau` edits inside existing mapped folders | Stop Play, pull, run checks; the running local Rojo normally live-syncs. Re-run Play to execute fresh server/client code and clear ModuleScript caches. No Rojo reconnect or place rebuild is normally needed. |
-| Add/remove/rename mapped code files or folders | Inspect the Rojo diff carefully; live sync normally handles these. Re-run Play. A mapping/root change falls under the next row. |
-| `default.project.json`, mapped roots, place restrictions, address or port | Stop the local Rojo server, pull, restart it, then disconnect/reconnect the Studio plugin and inspect the proposed sync. A change from unpublished to a published dev place requires the correct place-ID allowlist before reconnecting. |
-| CLI/plugin version change | Run `rokit install`, update the local Studio plugin to match, restart Rojo and reconnect. Restart Studio if required by plugin installation. |
-| Build-only/non-live-sync properties or imported assets Rojo cannot update live | Run `rojo build default.project.json -o build/GravityFoundry.rbxlx` and open the rebuilt file for inspection. This scaffold has no such world properties. Preserve Studio-owned world work; a fresh scaffold file is not a merge into your existing world. |
-| Documentation, formatter/linter configuration or CI only | No Studio reconnect or rebuild needed; run affected checks. |
-| Downloaded `.rbxlx` artifact workflow | Every code change needs a fresh build and download/open; there is no live connection. |
+| Luau edits/new modules inside existing mapped folders | Pull, check, allow live sync, then restart Play. A Rojo reconnect is normally unnecessary. |
+| Rojo mappings, place allowlist, port/address | Restart local Rojo and reconnect the plugin; inspect the sync. |
+| CLI/plugin version | Install matching versions, restart Rojo, reconnect; restart Studio if plugin installation requires it. |
+| Build-only properties or artifact-only workflow | Rebuild with `rojo build default.project.json -o build/GravityFoundry.rbxlx`; reopen the new file. |
+| Docs, lint definitions or CI | Run affected checks; no Studio reconnect needed. |
 
-A successful sync alone does not rerun already-executed scripts or invalidate every required module. Stop and start Play after code changes. Build checks do not constitute an engine playtest.
+The generated arena is under `Workspace.GravityFoundryArena`; client effects are under `Workspace.FoundryLocalEffects`. Use an otherwise empty test place so Studio-owned geometry does not overlap it. Rojo owns only `ReplicatedStorage.GravityFoundryShared`, `ServerScriptService.GravityFoundryServer`, and `StarterPlayer.StarterPlayerScripts.GravityFoundryClient`. No broad Workspace mapping is introduced.
+
+## File fallback
+
+Download `build/GravityFoundry.rbxlx` from the cloud workspace and open it locally. This needs no Rojo connection but is a point-in-time build: every update needs a new build/download. A fresh file does not merge an existing hand-built world; preserve that work separately.
+
+No cloud port exposure, Roblox credentials or experience publication is required.

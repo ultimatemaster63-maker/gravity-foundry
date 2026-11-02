@@ -1,0 +1,10 @@
+{
+  "selene_version": "0.29.0",
+  "source_url": "https://codeload.github.com/Kampfkarren/selene/zip/refs/tags/0.29.0",
+  "source_sha256": "445e85e9eaf0582125d58e9e3c330d7436f337feb0eba3efcae4d49a6e15cf91",
+  "api_commit": "84e5cc5fd8405e75c9f8c70116e450aef327ff56",
+  "api_url": "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker/84e5cc5fd8405e75c9f8c70116e450aef327ff56/API-Dump.json",
+  "api_sha256": "0962f777e3085487e368ed019c35bdb07cd02f6659aa7212dc2ad6e24bb41efe",
+  "generated_sha256": "514ca076f91e5d66838ebc4b94b2a1be245341b434a768876a5b49dee5dd2bcb",
+  "rust_version": "1.85.1"
+}

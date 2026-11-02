@@ -1,25 +1,23 @@
 # Gravity Foundry
 
-A standalone Roblox gravity-combat game with a runtime-generated industrial arena, three sectors, Salvage upgrades and a reactor guardian. See [first playable and test route](docs/PLAYTEST.md). This project has no Titan connection or place IDs. Progress is session-only.
+Pull visible scrap into orbit, launch it through abandoned foundry machinery, forge increasingly strange gravity equipment, and dismantle the reactor Warden.
 
-- `src/server`: one server entry point; add private systems as ModuleScripts here.
-- `src/client`: one client entry point; add controllers as ModuleScripts here.
-- `src/shared`: client-safe shared modules, currently project identity.
-- `default.project.json`: maps dedicated GravityFoundry code folders only. Studio owns the world.
-- `v2-vault-main/v2-vault-main`: bundled LihFolk development reference; not part of the built game.
+The first-version route includes three distinct areas, destructible machinery/barriers, telegraphed drone attacks, a three-phase guardian with throwable couplings, five visibly different gear stages, a Forge preview, victory and cooperative replay consent. Session upgrades survive death and in-game replay. Cross-server saving is not implemented.
 
-## Tools and checks
+- `src/server`: authored runtime arena and authoritative combat/progression.
+- `src/client`: controls, responsive HUD/Forge, visual and audio feedback.
+- `src/shared`: progression rules, gear geometry, orbit pose and damage rules.
+- `default.project.json`: existing code-only Rojo mappings; no Titan connection.
+- `docs/PLAYTEST.md`: exact controls and full completion route.
+- `docs/VALIDATION.md`: automated evidence and what still needs Studio testing.
 
-Pinned in `rokit.toml`: Rojo 7.6.1, Selene 0.29.0, StyLua 2.3.1. With [Rokit](https://github.com/rojo-rbx/rokit) installed, run `rokit install` from this directory. Python 3 is required by the check runner. No Wally packages are needed.
-
-Linux cloud alternative:
+## Checks
 
 ```sh
-python3 scripts/install-cloud-tools.py
-export PATH="$PWD/.tools/bin:$PATH"
-python3 scripts/check.py
+rokit install
+python scripts/check.py
 ```
 
-Checks cover StyLua formatting, Selene lint, Rojo place build and sourcemap generation. `--!strict` marks Luau files for Studio analysis; Selene is not a Luau type checker. Studio Script Analysis and Play remain required.
+Rojo 7.6.1, Selene 0.29.0 and StyLua 2.3.1 remain pinned. Selene now reads a committed, checksum-verified API cache; no API download is required for linting. For supplemental compiler/type/server-flow tests, see VALIDATION.md and run `python scripts/check.py --extended` after installing those tools.
 
-See [Studio handoff](docs/STUDIO.md) for exact local setup, transfer and playtesting steps, and [setup evidence](docs/SETUP.md) for validation and limitations.
+Open and sync using [the Studio guide](docs/STUDIO.md). The arena is generated when Play begins. Automated checks pass, but no agent-operated Studio connection was available for this revision; engine acceptance remains outstanding. No experience was published.

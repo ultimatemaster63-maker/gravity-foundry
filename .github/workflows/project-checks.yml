@@ -11,8 +11,10 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install pinned tools
-        run: python3 scripts/install-cloud-tools.py
+        run: |
+          python3 scripts/install-cloud-tools.py
+          python3 scripts/install-validation-tools.py
       - name: Format, lint and build
         run: |
           export PATH="$PWD/.tools/bin:$PATH"
-          python3 scripts/check.py
+          python3 scripts/check.py --extended
